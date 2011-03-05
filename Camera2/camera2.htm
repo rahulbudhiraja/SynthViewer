@@ -1,0 +1,101 @@
+<html>
+
+<head>
+<title>The advanced CodeColony Camera</title>
+</head>
+
+<body bgcolor="#000000" text="#FF0000" link="#ABABAB" vlink="#D6B001" alink="#FFFF00">
+<font FACE="Times New Roman" SIZE="2">
+
+<p></font><font FACE="Times New Roman" size="6"><strong>Advanced Camera</strong></font><font FACE="Times New Roman" size="3"></p>
+
+<p></font><font FACE="Times New Roman" size="4"><strong>What you can do with the camera:</strong></font><font FACE="Times New Roman" size="3"></p>
+
+<blockquote>
+  <ul>
+    <li>Rotate around all axis</li>
+    <li>Move in the direction of the upvector, rightvector and of the view direction</li>
+  </ul>
+</blockquote>
+
+<p></font><font FACE="Times New Roman" size="4"><strong>What's the target of the camera?</strong></p>
+</font>
+<p><font FACE="Times New Roman" size="3">
+  Some years ago I wrote my first camera tutorial. As I didn't want to make it too complex
+  I didn't add rotation around all axis.<br>
+  I changed this with my advanced camera.
+</font></p>
+
+<p></font><font FACE="Times New Roman" size="4"><strong>How does the camera work?</strong></p>
+</font>
+<p><font FACE="Times New Roman" size="3">
+  The orientation of the camera is described by three vectors: The <i>view direction</i> (like in the
+  first camera), the <i>right vector</i> and the <i>up vector</i>.<br>
+  Initially the orientation points along the negative z-axis: View Direction (0|0|-1), Right Vector (1|0|0), UpVector (0|1|0).<br>
+  Let's say, RotateY is called. This does no longer mean that the orientation is rotated around
+  the y-axis. Instead, it is rotated around the up vector.<br>
+  But what does it mean to rotate the "orientation"? It means to rotate the <i>view direction</i>,
+  the <i>right vector</i> and the <i>up vector</i>. Rotation around a certain straight line is normally
+  done by multiplying the vector with a rotation matrix. I already had started to implement this kind of
+  rotation, but then I realized that we have a very special case here which can be handled more easily:<br>
+  This makes our case special:
+  <ol>
+  <li>only two vectors must be rotated at each RotateX/Y/Z</li>
+  <li>all vectors are perpendicular, so one vector always can be computed by the cross product (i.e. we have to rotate only one vector!)</li>
+  <li>the vector which must be rotated around the straight line is perpendicular to the line's direction</li>
+  <li>we know the vector which is perpendicular to the vector which must be computed and the line's direction</li>
+</ol>
+  I hope you aren't too confused now. You probably will understand why these points are important
+  if you consider a concrete case of rotation:<br>
+  Let's assume we want to rotate the camera's orientation around the <i>right vector</i>. This means,
+  that the <i>right vector</i> will not change (1). As point (2) says, it is enough to rotate the <i>view direction vector</i>.
+  The new <i>up vector</i> can be computed by the cross product (we could also rotate the <i>up vector</i> and calculate the <i>view direction vector </i>
+  - it would create the same result).<br>
+  If you wonder what I need the last two points for, this image might help:<br>
+  <img src="images/camera2_1.gif"><br>
+  The <i>view direction</i> is rotated around the right vector. The angle is called alpha and this
+  alpha is negative, so the sine "sin(alpha)" is negative, too.<br>
+  If you know want to rotate the <i>view direction vector</i>, you first shorten it to the upper
+  blue line (AC). This vector is cos(alpha)*viewdirection (where viewdirection is a vector).<br>
+  Now you have to add the vector from C to D which is parallel to the <i>upvector,</i> because the <i>upvector</i>
+  is perpendicular to rightvector and <i>view direction</i>.<br>
+  Look at this image, where we have the same situation in 2d:<br>
+  <img src="images/camera2_2.gif"><br>
+  Here you can see clearly that the new vector (AD) is:<br>
+  AD = cos(alpha)*AB+sin(alpha)*AE.<br>
+  It is the same in 3d!<br>
+  You now can turn a vector around another one (at least in our special case). After you have turned
+  the <i>view direction</i> around the <i>right vector</i>, you can compute the <i>up vector</i> by using the
+  cross product - ready!
+  <br>
+  <br>
+  The rest is easy to understand:<br>
+  The new orientation is computed each time a Rotate? method is called. As it is always only one rotation, it does not
+  require too much calculation time.<br>
+  The Move (or Strafe) methods are also very easy: Simplify stretch the <i>right vector / up vector / view direction vector</i>
+  with a certain factor and add this vector to the position.<br>
+  <br>
+  <br>
+  If you have problems to imagine how the three orientation vectors behave, you can have a look at the sample code
+  <a href="../opengl.htm#LookingAtCamera">Looking at the camera</a>. Here you can use the same keys to control the camera.
+  But the camera is not used for rendering - you can see the three vectors: <i>right vector</i> (red), <i> up vector </i>(white),
+  and <i>view direction vector </i>(yellow):
+   
+
+
+
+</font></p>
+
+<p><a href="../opengl.htm#camera2">Here</a> you can find the downloads to this document.</font></p>
+
+<p><font size="3"><a href="../opengl.htm">Back</a></font></p>
+
+<p><big>**************************************************************************</big></p>
+
+<p><big>Any comments? Conact me!</big></p>
+
+<p><big><a href="mailto:philipp.crocoll@web.de">philipp.crocoll@web.de</a></big></p>
+
+<p><big><a href="http://www.codecolony.de">www.codecolony.de</a></big></p>
+</body>
+</html>
